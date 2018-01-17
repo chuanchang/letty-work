@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (c *Client)GetFullPullRequest(opt *github.PullRequestListOptions) ([]*github.PullRequest, error) {
+func (c *Client) GetFullPullRequest(opt *github.PullRequestListOptions) ([]*github.PullRequest, error) {
 
 	pr, _, err := c.client.PullRequests.List(context.Background(), c.cfg.Owner, c.cfg.Repo, opt)
 
@@ -21,16 +21,13 @@ func (c *Client)GetFullPullRequest(opt *github.PullRequestListOptions) ([]*githu
 }
 
 // Get the latest number created Pull request.
-func (c *Client)GetLatestNumCreatedPR(num int) ([]*github.PullRequest, error) {
+func (c *Client) GetLatestNumCreatedPR(num int) ([]*github.PullRequest, error) {
 
 	opt := &github.PullRequestListOptions{
-		Sort: "created",
+		Sort:      "created",
 		Direction: "asc",
 	}
 
-	pr , err := c.GetFullPullRequest(opt)
+	pr, err := c.GetFullPullRequest(opt)
 	return pr[0:num], err
 }
-
-
-

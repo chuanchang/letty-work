@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (c *Client)GetFullCommit(opt *github.CommitsListOptions) ([]*github.RepositoryCommit, error) {
+func (c *Client) GetFullCommit(opt *github.CommitsListOptions) ([]*github.RepositoryCommit, error) {
 	cmit, resp, err := c.client.Repositories.ListCommits(context.Background(), c.cfg.Owner, c.cfg.Repo, opt)
 	if err != nil {
 		logrus.Errorf("get commit list fromt repo %s failed with\n error:%s\n response :%s\n", c.cfg.Repo, err, resp)
@@ -18,7 +18,7 @@ func (c *Client)GetFullCommit(opt *github.CommitsListOptions) ([]*github.Reposit
 }
 
 // Get commit by the filter
-func (c *Client)GetFilterCommit(time time.Time) ([]*github.RepositoryCommit, error) {
+func (c *Client) GetFilterCommit(time time.Time) ([]*github.RepositoryCommit, error) {
 	opt := &github.CommitsListOptions{
 		Since: time,
 	}

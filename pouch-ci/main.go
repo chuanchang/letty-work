@@ -2,24 +2,24 @@ package main
 
 import (
 	"context"
+	"os/exec"
 	"time"
 
 	"github.com/google/go-github/github"
-	"golang.org/x/oauth2"
-	"github.com/spf13/cobra"
 	"github.com/sirupsen/logrus"
-
+	"github.com/spf13/cobra"
+	"golang.org/x/oauth2"
 )
 
 const (
 	//DefaultRepo="https://github.com/alibaba/pouch"
-	DefaultRepo="pouch"
-	DefaultOwner="Letty5411"
+	DefaultRepo  = "pouch"
+	DefaultOwner = "Letty5411"
 )
 
 type Client struct {
 	client *github.Client
-	cfg Config
+	cfg    Config
 }
 
 // Config refers
@@ -41,14 +41,13 @@ func main() {
 
 	flagSet := cmdServe.Flags()
 	flagSet.StringVarP(&cfg.Owner, "owner", "o", DefaultOwner, "github ID to which connect in GitHub")
-	flagSet.StringVarP(&cfg.Repo,"repo", "r", DefaultRepo, "github repo to which connect in GitHub")
+	flagSet.StringVarP(&cfg.Repo, "repo", "r", DefaultRepo, "github repo to which connect in GitHub")
 	flagSet.StringVarP(&cfg.AccessToken, "token", "t", "", "access token to have some control on resources")
 
 	cmdServe.Execute()
 }
 
-
-func Run(cfg Config) error{
+func Run(cfg Config) error {
 
 	var c Client
 	// Create an authenticated Client
@@ -66,7 +65,7 @@ func Run(cfg Config) error{
 
 	for {
 		commit := make([]*github.RepositoryCommit, 100)
-		commit, _=c.GetFilterCommit(t)
+		commit, _ = c.GetFilterCommit(t)
 
 		logrus.Println(t)
 		logrus.Println(len(commit))
@@ -76,10 +75,10 @@ func Run(cfg Config) error{
 		}
 
 		// Get the current time and check if there is any update
-		time.Sleep(1)
+
+		time.Sleep(600*time.Second)
 		t = time.Now()
 	}
-
 
 	//baseUrl := *pr[0].GetBase().GetRepo().URL
 
@@ -88,7 +87,20 @@ func Run(cfg Config) error{
 
 func RunCI(commit []*github.RepositoryCommit) {
 	logrus.Println("In ci")
-	for _,v := range commit {
+	for _, v := range commit {
 		logrus.Printf("%s", v.GetSHA())
+
+		cmd := exec.Command("java", "-jar", "jenkins-cli.jar", "-s",
+			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA())
+		logrus.Println(cmd)
+		cmd.Start()
+		err := cmd.Start()
+		if err != nil {
+			logrus.Errorf("%s", err)
+		}
+		logrus.Printf("Waiting for command to finish...")
+		err = cmd.Wait()
+		logrus.Printf("Command finished with error: %v", err)
+
 	}
 }
