@@ -59,7 +59,8 @@ func Run(cfg Config) error {
 
 	c.cfg = cfg
 
-	t := time.Date(2018, time.January, 18, 00, 00, 0, 0, time.UTC)
+	//t := time.Date(2018, time.January, 18, 00, 00, 0, 0, time.UTC)
+	t := time.Now()
 	for {
 		commit := make([]*github.RepositoryCommit, 100)
 		commit, _ = c.GetFilterCommit(t)
