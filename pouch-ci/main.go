@@ -60,7 +60,7 @@ func Run(cfg Config) error {
 
 	c.cfg = cfg
 
-	t := time.Date(2018, time.January, 15, 23, 0, 0, 0, time.UTC)
+	t := time.Now()
 	//start := time.Now()
 
 	for {
@@ -71,7 +71,7 @@ func Run(cfg Config) error {
 		logrus.Println(len(commit))
 
 		if len(commit) != 0 {
-			RunCI(commit)
+			c.RunCI(commit)
 		}
 
 		// Get the current time and check if there is any update
@@ -85,13 +85,13 @@ func Run(cfg Config) error {
 	return nil
 }
 
-func RunCI(commit []*github.RepositoryCommit) {
+func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 	logrus.Println("In ci")
 	for _, v := range commit {
 		logrus.Printf("%s", v.GetSHA())
 
 		cmd := exec.Command("java", "-jar", "jenkins-cli.jar", "-s",
-			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "OpenSourcePouch4.9")
+			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "-p", "token="+c.cfg.AccessToken, "OpenSourcePouch4.9")
 		logrus.Println(cmd)
 		err := cmd.Start()
 		if err != nil {
