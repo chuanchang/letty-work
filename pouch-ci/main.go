@@ -12,9 +12,8 @@ import (
 )
 
 const (
-	//DefaultRepo="https://github.com/alibaba/pouch"
 	DefaultRepo  = "pouch"
-	DefaultOwner = "Letty5411"
+	DefaultOwner = "alibaba"
 )
 
 type Client struct {
@@ -60,9 +59,7 @@ func Run(cfg Config) error {
 
 	c.cfg = cfg
 
-	t := time.Now()
-	//start := time.Now()
-
+	t := time.Date(2018, time.January, 18, 00, 00, 0, 0, time.UTC)
 	for {
 		commit := make([]*github.RepositoryCommit, 100)
 		commit, _ = c.GetFilterCommit(t)
@@ -91,7 +88,7 @@ func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 		logrus.Printf("%s", v.GetSHA())
 
 		cmd := exec.Command("java", "-jar", "jenkins-cli.jar", "-s",
-			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "-p", "OpenSourcePouch4.9")
+			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "OpenSourcePouch4.9")
 		logrus.Println(cmd)
 		err := cmd.Start()
 		if err != nil {
