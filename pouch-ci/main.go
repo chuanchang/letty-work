@@ -91,7 +91,7 @@ func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 		logrus.Printf("%s", v.GetSHA())
 
 		cmd := exec.Command("java", "-jar", "jenkins-cli.jar", "-s",
-			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "-p", "token="+c.cfg.AccessToken, "OpenSourcePouch4.9")
+			"http://tester:tester@11.160.112.29:8080/", "build", "-f", "-s", "-v", "-p", "commit="+v.GetSHA(), "-p", "OpenSourcePouch4.9")
 		logrus.Println(cmd)
 		err := cmd.Start()
 		if err != nil {
