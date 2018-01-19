@@ -74,8 +74,8 @@ func Run(cfg Config) error {
 
 		// Get the current time and check if there is any update
 
-		time.Sleep(600*time.Second)
 		t = time.Now()
+		time.Sleep(600*time.Second)
 	}
 
 	//baseUrl := *pr[0].GetBase().GetRepo().URL

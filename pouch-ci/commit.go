@@ -20,6 +20,7 @@ func (c *Client) GetFullCommit(opt *github.CommitsListOptions) ([]*github.Reposi
 // Get commit by the filter
 func (c *Client) GetFilterCommit(time time.Time) ([]*github.RepositoryCommit, error) {
 	opt := &github.CommitsListOptions{
+		SHA:"master",
 		Since: time,
 	}
 
