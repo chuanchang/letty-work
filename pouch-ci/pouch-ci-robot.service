@@ -1,0 +1,14 @@
+[Unit]
+SourcePath=/home/sit/letty/src/github.com/letty-work/pouch-ci/pouch-ci-robot.bin
+
+[Service]
+Type=forking
+Restart=no
+TimeoutSec=1min
+RemainAfterExit=yes
+ExecStart=/home/sit/letty/src/github.com/letty-work/pouch-ci/pouch-ci-robot
+ExecStop=/bin/kill –HUP $MAINPID
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
