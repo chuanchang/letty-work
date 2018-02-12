@@ -88,7 +88,23 @@ func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 	for _, v := range commit {
 		logrus.Printf("%s", v.GetSHA())
 
-		cmd := exec.Command("java", "-jar", "jenkins-cli.jar", "-s",
+		{
+		// CI on AliOS
+		cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
+			"http://tester:tester@11.160.112.29:8080/", "build",  "-p", "commit="+v.GetSHA(), "OpenSourcePouchOnInternalAlios49")
+		logrus.Println(cmd)
+		err := cmd.Start()
+		if err != nil {
+			logrus.Errorf("%s", err)
+		}
+		logrus.Printf("Waiting for command to finish...")
+		err = cmd.Wait()
+		logrus.Printf("Command finished with error: %v", err)
+		}
+		
+		{
+		// CI on opensource AliOS
+		cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
 			"http://tester:tester@11.160.112.29:8080/", "build",  "-p", "commit="+v.GetSHA(), "OpenSourcePouch4.9")
 		logrus.Println(cmd)
 		err := cmd.Start()
@@ -98,6 +114,6 @@ func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 		logrus.Printf("Waiting for command to finish...")
 		err = cmd.Wait()
 		logrus.Printf("Command finished with error: %v", err)
-
+		}
 	}
 }
