@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/go-github/github"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 func (c *Client) GetFullCommit(opt *github.CommitsListOptions) ([]*github.RepositoryCommit, error) {
@@ -20,7 +20,7 @@ func (c *Client) GetFullCommit(opt *github.CommitsListOptions) ([]*github.Reposi
 // Get commit by the filter
 func (c *Client) GetFilterCommit(time time.Time) ([]*github.RepositoryCommit, error) {
 	opt := &github.CommitsListOptions{
-		SHA:"master",
+		SHA:   "master",
 		Since: time,
 	}
 
@@ -28,6 +28,12 @@ func (c *Client) GetFilterCommit(time time.Time) ([]*github.RepositoryCommit, er
 	if err != nil {
 		logrus.Errorf("get commit failed with error:%s", err)
 		return nil, err
+	}
+
+	// reverse the commit so it is sorted by date.
+	for i := 0; i < len(cm)/2; i++ {
+		j := len(cm) - i - 1
+		cm[i], cm[j] = cm[j], cm[i]
 	}
 
 	return cm, nil
