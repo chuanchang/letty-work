@@ -85,53 +85,22 @@ func Run(cfg Config) error {
 
 func (c *Client) RunCI(commit []*github.RepositoryCommit) {
 	logrus.Println("In ci")
+	jar_cli := "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar"
+	ci_url := "http://tester:tester@11.160.112.29:8080/"
+	ci_jobs := [...]string{
+		"OpenSourcePouch4.9",
+		"PerformanceOpensourcePouch",
+		"OpenSourcePouchOnInternalAlios3.10-unit-test",
+		"OpenSourcePouchOnInternalAlios3.10-integration-test",
+		"OpenSourcePouchOnInternalAlios49-integration-test",
+	}
+
 	for _, v := range commit {
 		logrus.Printf("%s", v.GetSHA())
 
-		{
+		for _, job := range ci_jobs {
 			// CI on AliOS
-			cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
-				"http://tester:tester@11.160.112.29:8080/", "build", "-p", "commit="+v.GetSHA(), "OpenSourcePouchOnInternalAlios49")
-			logrus.Println(cmd)
-			err := cmd.Start()
-			if err != nil {
-				logrus.Errorf("%s", err)
-			}
-			logrus.Printf("Waiting for command to finish...")
-			err = cmd.Wait()
-			logrus.Printf("Command finished with error: %v", err)
-		}
-
-		{
-			// CI on opensource AliOS
-			cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
-				"http://tester:tester@11.160.112.29:8080/", "build", "-p", "commit="+v.GetSHA(), "OpenSourcePouch4.9")
-			logrus.Println(cmd)
-			err := cmd.Start()
-			if err != nil {
-				logrus.Errorf("%s", err)
-			}
-			logrus.Printf("Waiting for command to finish...")
-			err = cmd.Wait()
-			logrus.Printf("Command finished with error: %v", err)
-		}
-		{
-			// CI on opensource AliOS 3.10
-			cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
-				"http://tester:tester@11.160.112.29:8080/", "build", "-p", "commit="+v.GetSHA(), "OpenSourcePouchOnInternalAlios3.10")
-			logrus.Println(cmd)
-			err := cmd.Start()
-			if err != nil {
-				logrus.Errorf("%s", err)
-			}
-			logrus.Printf("Waiting for command to finish...")
-			err = cmd.Wait()
-			logrus.Printf("Command finished with error: %v", err)
-		}
-		{
-			// CI on opensource performance test
-			cmd := exec.Command("java", "-jar", "/home/sit/letty/src/github.com/letty-work/pouch-ci/jenkins-cli.jar", "-s",
-				"http://tester:tester@11.160.112.29:8080/", "build", "-p", "commit="+v.GetSHA(), "PerformanceOpensourcePouch")
+			cmd := exec.Command("java", "-jar", jar_cli, "-s", ci_url, "build", "-p", "commit="+v.GetSHA(), job)
 			logrus.Println(cmd)
 			err := cmd.Start()
 			if err != nil {
